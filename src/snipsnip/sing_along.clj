@@ -8,17 +8,34 @@
 
 (use 'clojure.repl)
 
+(doc snippet)
 
-;; can we find the verse-one node?
+net.cgrand.enlive-html/snippet
+;;([source selector args & forms])
+;;Macro
+;; A snippet is a function that returns a seq of nodes.
 
-((snippet "snipsnip.html" [:#verse-one] [])) ;;place your cursor here, and press C-c C-p (pretty print the result.
+;; what is a seq of nodes, you may wonder...
+
+(snippet "snipsnip.html" [:#verse-one] [])
+
+;; snippet returns a function
+#object[snipsnip.sing_along$eval8952$fn__8954 0x468836f0 "snipsnip.sing_along$eval8952$fn__8954@468836f0"]
+
+;; this is not a seq of nodes...
+
+;; if we call the snippet (outer parenthesis), we see a sequence of nodes!
+
+;;place your cursor after the expression below, and press C-c C-p (cider will pretty print the result).
+
+((snippet "snipsnip.html" [:#verse-one] []))
 
 ;;This makes all the difference.
 
-;; REALLY, start emacs and print C-c C-p after the expression above.
+;; REALLY, start emacs, cider-jack-in and print C-c C-p after the expression above.
 ;; anyway. it looks like this:
 
-({:tag :p,
+'({:tag :p,
     :attrs {:id "verse-one"},
     :content
     '("Conrad's mother said Conrad dear"
@@ -30,8 +47,8 @@
      "\ndon't suck your thumbs while I'm away.")})
 
 ;; study the structure of the :content
-;; it's a sequence '(I escaped it) of strings
-;; and other nodes.
+;; it's a (recursive) sequence of strings
+;; and other nodes. '(I escaped it)
 
 
 ;; some basic enlive selections
@@ -42,19 +59,21 @@
 
 ((snippet "snipsnip.html" [:a] []))
 
+
 #_({:tag :a, :attrs {:href "https://www.tigerlillies.com/"}, :content ("The Tiger Lillies")}
    {:tag :a,
     :attrs {:href "https://www.youtube.com/watch?feature=player_detailpage&v=UmlIUvlaB_Y#t=193"},
     :content ("hillarious video")})
 
-;; note that these are two individual nodes,
+;; note that these are two individual :a nodes,
 ;; not having that much to do with each other
 
 ;; now let's select content strings using the enlive function
 ;; the text-pred, which takes a string matching predicate
 ;; matching predicate and returns an enlive state-machine for this
 
-;; Conrad:
+;; Concerns over Conrad
+;;
 ;; first and foremost, what happends to dear Conrad? Look for all 
 ;; strings which contains Conrad
 ((snippet "snipsnip.html" [(text-pred #(re-find #"Conrad" %))] []))
@@ -71,6 +90,8 @@
 
 ;; It doesn't look very good for Conrad.
 
+
+
 ;; There's a row  <p>snip! snip</p> in the file, can we find this whole node?
 
 ;; this finds the content of the node:
@@ -78,10 +99,10 @@
 
 #_("snip! snip")
 
-;;we can easily find all :p nodes in the document
+;;we can also easily find all :p nodes in the document
 
 (count ((snippet "snipsnip.html" [:p] [])))
-;; there are 9 nodes in the document
+;; there are 9 :p nodes in the document
 
 ;;we can narrow the search by specifiying more attributes
 (count ((snippet "snipsnip.html" [:p.refrain] [])))
@@ -261,9 +282,6 @@ pred
 
 ;; and press M-., cider now takes you to the source code of enlive 
 ;; you can pop back here with M-,
-
-
-
 
 
 
